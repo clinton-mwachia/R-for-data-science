@@ -44,3 +44,71 @@ select(flights, c('year','month','day'))
 select(flights, year:day)
 # SELECT ALL CLUMNS EXCEPTE YEAT TO DAYA
 select(flights, -c(year:day))
+
+# RENAMING COLUMNS
+rename(flights, tail_num = tailnum)
+
+select(flights, time_hour, air_time, everything())
+
+## ADDING A NEW VARIABLE
+flights_sml <- select(flights, year:day, ends_with('delay'), distance, air_time)
+flights_sml
+
+mutate(flights_sml,
+       gain = arr_delay - dep_delay,
+       speed = distance / air_time * 60)
+
+mutate(flights_sml,
+       gain = arr_delay - dep_delay,
+       hours = air_time / 60,
+       gain_per_hour = gain / hours)
+
+# DISPLAY ONLY THE NEW VARIABLES
+transmute(flights,
+          gain = arr_delay - dep_delay,
+          hours = air_time / 60,
+          gain_per_hour = gain / hours)
+
+transmute(flights,
+          dep_time,
+          hour = dep_time %/% 100,# interger division
+          minute = dep_time %% 100) # remainder
+
+# RANKS
+y <- c(1,2,NA,3,4,5)
+min_rank(y)
+min_rank(desc(y))
+percent_rank(y)
+cume_dist(y)
+dense_rank(y)
+
+
+# GROUP SUMMARIES
+summarize(flights, delay = mean(dep_delay, na.rm = TRUE))
+
+by_day <- group_by(flights, year, month, day)
+by_day
+summarize(by_day, delay = mean(dep_delay, na.rm = TRUE))
+
+# PIPE OPERATORS
+by_dest <- group_by(flights, dest)
+by_dest
+delay <- summarize(by_dest, count = n(),
+                   dist = mean(distance, na.rm = TRUE),
+                   delay = mean(arr_delay, na.rm = TRUE))
+delay <- filter(delay, count > 20, dest != 'HNL')
+delay
+
+ggplot(data = delay, mapping = aes(x=dist, y=delay)) +
+  geom_point(aes(size = count), alpha = 1/3) +
+  geom_smooth(se = FALSE)
+
+# USING THE PIPE OPERATOR
+delays <- flights %>%
+  group_by(dest) %>%
+  summarize(
+    count = n(),
+    dist = mean(distance, na.rm = TRUE),
+    delay = mean(arr_delay, na.rm = TRUE)
+  ) %>%
+  filter(count > 20, dest != 'HNL')
