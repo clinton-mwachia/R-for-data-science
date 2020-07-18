@@ -189,3 +189,16 @@ not_cancelled %>%
     first_dep = first(dep_time),
     last_dep = last(dep_time)
   )
+
+daily <- group_by(flights, year, month, day)
+daily
+per_day <- summarize(daily, flights = n())
+per_day
+
+per_year <- summarize(per_day, flights = sum(flights))
+per_year
+
+# UNGROUPING
+daily %>%
+  ungroup() %>%
+  summarize(flights = n())
