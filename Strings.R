@@ -1,5 +1,9 @@
 library(tidyverse)
+# simple string manipulation
 library(stringr)
+# intensive string manipulation
+library(stringi)
+library(microbenchmark)
 
 #?'""'
 # length of a string including a space
@@ -155,3 +159,87 @@ str_replace(x, '[aeiou]', '-')
 str_replace_all(x, '[aeiou]', '-')
 x <- c('1 apple','10 banana','3 pear')
 str_replace_all(x, c('1'='one','10'='ten','3'='three'))
+
+# SPLITTING
+# split words
+sentences %>%
+  head(5) %>%
+  str_split(' ', simplify = TRUE)
+
+fields = c('Name: Clinton', 'Country: Kenya', 'Age: 24')
+fields %>%
+  str_split(':', n = 2, simplify = TRUE)
+
+# split by character, line_break, sentence and word
+x <- 'This is a sentence. This is another sentence.'
+str_view_all(x, boundary('sentence'))
+
+str_split(x, boundary('sentence'))
+
+# FIND MATCHES
+str_view(fruit, 'nana')
+str_view(fruit, regex('nana'))
+
+banana <- c('banana','Banana','BANANA')
+str_view(banana, regex('banana', ignore_case = TRUE))
+
+x <- 'line1\nline2\nline3'
+x
+str_extract_all(x, regex('^line',multiline = TRUE))[[1]]
+
+x <- '
+# comment 1
+# comment2
+clinton
+'
+x
+str_extract_all(x, regex('clinton'))[[1]]
+# fixed is faster
+str_detect(x, fixed('clinton'))
+
+# testing speed
+# fixed is faster than regex
+microbenchmark(
+  fixed = str_detect(sentences, fixed('the')),
+  regex = str_detect(sentences, 'the'),
+  times = 20
+)
+
+# NOTE::
+a1 = "\u00e1"
+a2 = "a\u0301"
+c(a1, a2)
+a1 == a2
+
+str_detect(a1, fixed(a2))
+# coll compares bytes
+str_detect(a1, coll(a2))
+
+
+i <- c('I','I','i','i')
+i
+str_subset(i, coll('i', ignore_case = TRUE))
+
+str_subset(i, coll('i', ignore_case = TRUE, locale = 'tr'))
+# locales
+stringi::stri_locale_info()
+
+# testing time for both the 3
+microbenchmark(
+  fixed = str_detect(sentences, fixed('the')),
+  regex = str_detect(sentences, 'the'),
+  colll = str_detect(sentences, coll('the')),
+  times = 20
+)
+
+# find objects in the local environment
+searchpaths()
+search()
+# search for functions
+apropos('geom')
+
+# search for files in the current dir
+dir(pattern = '*.R$')
+
+
+stringi::stri_count('moshe moshe', fixed = 'moshe')
