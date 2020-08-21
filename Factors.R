@@ -98,3 +98,38 @@ gss_cat %>%
   mutate(marital = marital %>% fct_infreq()%>%fct_rev()) %>%
   ggplot(aes(marital)) +
   geom_bar()
+
+# modifying factor levels
+# renaming the factors
+gss_cat %>%
+  count(partyid)
+
+gss_cat %>%
+  mutate(partyid = fct_recode(partyid,
+        "Republican, strong" = "Strong republican",
+        "Republican, weak" = "Not str republican",
+        "Independent, near rep" = "Ind,near rep",
+        "Independent, near dem" = "Ind,near dem",
+        "Democrat, weak" = "Not str democrat",
+        "Democrat, strong" = "Strong democrat"
+                              )) %>%
+  count(partyid)
+
+# adding the levels into a new level
+# collapsing factors
+gss_cat %>%
+  mutate(partyid = fct_collapse(partyid,
+        other = c('No answer',"Don't know","Other party"),
+        rep = c("Strong republican","Not str republican"),
+        ind = c("Ind,near rep","Independent","Ind,near dem"),
+        dem = c("Not str democrat","Strong democrat"))) %>%
+  count(partyid)
+
+# combine all the small groups
+gss_cat %>%
+  count(relig, sort = T)
+
+gss_cat %>%
+  mutate(relig = fct_lump(relig, n=10)) %>%
+  count(relig, sort = TRUE) %>%
+  print(n=Inf)
