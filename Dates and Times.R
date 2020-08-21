@@ -62,3 +62,10 @@ flights_dt %>%
   filter(dep_time < ymd(20130102)) %>%
   ggplot(aes(dep_time)) +
   geom_freqpoly(binwidth=600)
+
+# from other types
+# switching between datetime and date
+as_datetime(today())
+as_date(now())
+
+# date time components
