@@ -69,3 +69,14 @@ as_datetime(today())
 as_date(now())
 
 # date time components
+# getting components
+# mday: day of the month
+# yday: day of the year
+# wday: day of the week
+datetime <- ymd_hms('20160708 12:34:56')
+datetime
+year(datetime)
+month(datetime)
+mday(datetime)
+yday(datetime)
+wday(datetime)
