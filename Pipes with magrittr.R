@@ -26,3 +26,15 @@ rnorm(100) %>%
   matrix(ncol = 2) %T>%
   plot() %>%
   str()
+
+#mtcars %>%
+#  cor(mpg, disp)
+mtcars %$%
+  cor(disp, mpg)
+
+####################################################
+mtcars <- mtcars %>%
+  transform(cyl = cyl * 2)
+# replaced with
+mtcars %<>% transform(cyl = cyl * 2)
+###################################################
