@@ -25,3 +25,8 @@ map_dbl(df, mean)
 map_dbl(df, sd)
 
 map_dbl(df, length)
+
+# models
+models <- mtcars %>%
+  split(.$cyl) %>%
+  map(function(df) lm(mpg~wt, data = df))
